@@ -1,0 +1,193 @@
+names:
+- ACM
+- ALB
+- AMI
+- API-Gateway
+- Active Directory Service
+- Airflow
+- Amplify
+- Analytics Services
+- AppFlow
+- Appsync
+- Athena
+- Aurora
+- Auto Scaling
+- Auto Scaling Group
+- Automated Tests
+- Availability Zone
+- Backup
+- Build Environment
+- CDN
+- CUR
+- Call Metrics
+- Call Recordings
+- Certificate Manager
+- Client
+- Cloud Connector
+- Cloud Map
+- Cloud Search
+- Cloud Trail
+- Cloud Watch
+- CloudFormation Stack
+- CloudHSM
+- CloudWatch Alarm
+- Cloudfront
+- CodeBuild
+- CodeCommit
+- CodeDeploy
+- CodePipeline
+- Cognito
+- Comprehend
+- Config
+- Connect
+- Connect Contact Lens
+- Container
+- Control Tower
+- Customer Gateway
+- DSI
+- Data Pipeline
+- DataSync
+- Deploy Stage
+- Detective
+- Direct Connect
+- Distribution
+- Docker Image
+- Dynamo DB
+- EBS
+- EC2
+- EFS
+- EFS Mount Target
+- EKS
+- ELB
+- EMR
+- Edge Location
+- ElastiCache
+- Elastic Container Registry
+- Elastic Container Service
+- Elastic Search
+- Elemental MediaConvert
+- Elemental MediaPackage
+- Email
+- Endpoint
+- Event Bus
+- EventBridge
+- Experiment Duration
+- Experiments
+- Fargate
+- Fault Injection Simulator
+- Firewall Manager
+- Flask
+- Flow logs
+- GameLift
+- Git
+- Github
+- Glacier
+- Glue
+- Glue DataBrew
+- Grafana
+- GuardDuty
+- IAM
+- IAM Role
+- IOT Core
+- Image
+- Image Builder
+- Ingress
+- Inspector Agent
+- Instances
+- Internet
+- Internet Gateway
+- Jenkins
+- Key Management Service
+- Kibana
+- Kinesis Data Streams
+- Kubernetes
+- Lambda
+- Lex
+- MQ
+- Machine Learning
+- Macie
+- Marketplace
+- Memcached
+- Mobile Client
+- Mongo DB
+- MySQL
+- NAT Gateway
+- Neptune
+- Network Adapter
+- Network Firewall
+- Notebook
+- Order Controller
+- Organization Trail
+- Parameter Store
+- Pinpoint
+- PostgreSQL
+- Private Link
+- Private Subnet
+- Prometheus
+- Public Subnet
+- Quarkus
+- Quicksight
+- RDS
+- React
+- Redis
+- Redshift
+- Region
+- Rekognition
+- Results
+- Route 53
+- Route53
+- S3
+- SAR
+- SDK
+- SES
+- SNS
+- SQS
+- SSM Agent
+- Sagemaker
+- Secret Manager
+- Security Group
+- Security Hub
+- Server
+- Service Catalog
+- Shield
+- Sign-On
+- Slack
+- Snowball
+- Stack
+- Step Function
+- Storage Gateway
+- SwaggerHub
+- Systems Manager
+- TV
+- Table
+- Task Runner
+- Terraform
+- Text File
+- Textract
+- Transcribe
+- Transfer Family
+- Transit Gateway
+- Translate
+- Trusted Advisor
+- Twilio
+- Users
+- VDA
+- VP Gateway
+- VPC Router
+- VPN Connection
+- WAF
+- Web Clients
+- Websites
+- X-Ray
+- aws
+- cache Worker
+nc: 182
+roboflow:
+  license: CC BY 4.0
+  project: aws-icon-detector-d3gb3
+  url: https://universe.roboflow.com/test-iw15m/aws-icon-detector-d3gb3/dataset/1
+  version: 1
+  workspace: test-iw15m
+test: ../test/images
+train: ../train/images
+val: ../valid/images
