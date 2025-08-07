@@ -227,6 +227,8 @@ def main():
         current_dir = Path(__file__).parent
         sample_dir = current_dir / "samples"
         sample_images = []
+        selected_sample = None  # Initialize selected_sample variable
+        
         if sample_dir.exists():
             # Support multiple image formats
             for ext in ["*.png", "*.jpg", "*.jpeg", "*.bmp", "*.tiff"]:
@@ -242,7 +244,6 @@ def main():
                 help="Select a sample AWS architecture diagram to test the detection"
             )
             
-            selected_sample = None
             if selected_sample_name:
                 sample_index = sample_names.index(selected_sample_name)
                 selected_sample = sample_images[sample_index]
