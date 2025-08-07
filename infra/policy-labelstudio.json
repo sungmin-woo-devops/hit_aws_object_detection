@@ -1,0 +1,42 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowListBucket",
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket"],
+      "Resource": ["arn:aws:s3:::aws-diagram-object-detection"]
+    },
+    {
+      "Sid": "AllowListPrefix",
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket"],
+      "Resource": ["arn:aws:s3:::aws-diagram-object-detection"],
+      "Condition": {
+        "StringLike": {
+          "s3:prefix": ["preprocessed", "preprocessed/*"]
+        }
+      }
+    },
+    {
+      "Sid": "AllowFullAccessToPrefix",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject"
+      ],
+      "Resource": ["arn:aws:s3:::aws-diagram-object-detection/preprocessed/*"]
+    },
+    {
+      "Sid": "AllowFullAccessToBucket",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject"
+      ],
+      "Resource": ["arn:aws:s3:::aws-diagram-object-detection/*"]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+# AWS Dataset Configuration
+
+path: ./data/processed  # dataset root dir
+train: images/train  # train images
+val: images/val      # val images  
+test: images/test    # test images (optional)
+
+# Classes
+nc: 23  # number of classes
+names:
+  0: EC2
+  1: S3
+  2: RDS
+  3: Lambda
+  4: API Gateway
+  5: CloudFront
+  6: VPC
+  7: ELB
+  8: Auto Scaling
+  9: CloudWatch
+  10: IAM
+  11: Route 53
+  12: SQS
+  13: SNS
+  14: DynamoDB
+  15: ElastiCache
+  16: EMR
+  17: Redshift
+  18: ECS
+  19: EKS
+  20: Fargate
+  21: Batch
+  22: Step Functions

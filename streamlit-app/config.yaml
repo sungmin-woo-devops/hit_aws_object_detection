@@ -1,0 +1,46 @@
+app:
+  title: "AWS Diagram Object Detection"
+  description: "Detect AWS services in architecture diagrams"
+  version: "1.0.0"
+
+model:
+  default_confidence: 0.5
+  default_nms = 0.45
+  max_image_size: 2048
+  supported_formats: ["png", "jpg", "jpeg"]
+
+aws:
+  classes:
+    - "EC2"
+    - "S3" 
+    - "RDS"
+    - "Lambda"
+    - "API Gateway"
+    - "CloudFront"
+    - "VPC"
+    - "ELB"
+    - "Auto Scaling"
+    - "CloudWatch"
+    - "IAM"
+    - "Route 53"
+    - "SQS"
+    - "SNS"
+    - "DynamoDB"
+    - "ElastiCache"
+    - "EMR"
+    - "Redshift"
+    - "ECS"
+    - "EKS"
+    - "Fargate"
+    - "Batch"
+    - "Step Functions"
+  
+visualization:
+  colors:
+    compute: "#FF9900"
+    storage: "#3F48CC"
+    database: "#3F48CC"
+    networking: "#FF9900"
+    security: "#DD344C"
+    analytics: "#9D5AAE"
+    ml: "#01A88D"

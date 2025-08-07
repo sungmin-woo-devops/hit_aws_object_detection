@@ -1,0 +1,98 @@
+# rotating logs so they do not overflow
+x-logging:
+  logging: &default-logging
+    driver: "local"
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+services:
+  # MinIO Service
+  minio:
+    image: "minio/minio:${MINIO_VERSION:-RELEASE.2025-04-22T22-12-26Z}"
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+    logging: *default-logging
+    ports:
+      - "19000:9000"  # S3 API
+      - "9001:9001"   # Web UI (Console)
+    volumes:
+      - ${MINIO_DATA_PATH:-~/DATA/smallpod/minio}:/data
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-minio}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-miniosecret}
+      - MINIO_PROMETHEUS_URL=${MINIO_PROMETHEUS_URL:-http://prometheus:9090}
+      - MINIO_PROMETHEUS_AUTH_TYPE=${MINIO_PROMETHEUS_AUTH_TYPE:-public}
+      - MINIO_SERVER_URL=http://minio:9000
+
+  # Prometheus Service
+  prometheus:
+    image: quay.io/prometheus/prometheus:v2.37.1
+    restart: unless-stopped
+    logging: *default-logging
+    volumes:
+      - "./prometheus/minio/prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "prometheus-data:/prometheus"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+
+  # Label Studio Nginx
+  nginx:
+    image: heartexlabs/label-studio:latest
+    restart: unless-stopped
+    ports:
+      - "8082:8085"
+      - "8083:8086"
+    depends_on:
+      - app
+    environment:
+      - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
+    volumes:
+      - ./mydata:/label-studio/data
+      - ./deploy/nginx/certs:/certs:ro
+    command: nginx
+
+  # Label Studio App
+  app:
+    stdin_open: true
+    tty: true
+    image: heartexlabs/label-studio:latest
+    restart: unless-stopped
+    expose:
+      - "8000"
+    depends_on:
+      - db
+    environment:
+      - DJANGO_DB=default
+      - POSTGRE_NAME=postgres
+      - POSTGRE_USER=postgres
+      - POSTGRE_PASSWORD=postgres
+      - POSTGRE_PORT=5432
+      - POSTGRE_HOST=db
+      - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
+      - JSON_LOG=1
+      - STORAGE_TYPE=s3
+      - STORAGE_AWS_ACCESS_KEY_ID=${LABEL_STUDIO_S3_ACCESS_KEY:-}
+      - STORAGE_AWS_SECRET_ACCESS_KEY=${LABEL_STUDIO_S3_SECRET_KEY:-}
+      - STORAGE_AWS_BUCKET_NAME=${LABEL_STUDIO_S3_BUCKET:-}
+      - STORAGE_AWS_ENDPOINT=${LABEL_STUDIO_S3_ENDPOINT:-}
+      - STORAGE_AWS_PREFIX=${LABEL_STUDIO_S3_PREFIX:-}
+      
+    volumes:
+      - ./mydata:/label-studio/data:rw
+    command: label-studio-uwsgi
+
+  # PostgreSQL Database
+  db:
+    image: pgautoupgrade/pgautoupgrade:13-alpine
+    hostname: db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_USER=postgres
+    volumes:
+      - ${POSTGRES_DATA_DIR:-./postgres-data}:/var/lib/postgresql/data
+      - ./deploy/pgsql/certs:/var/lib/postgresql/certs:ro
+
+volumes:
+  prometheus-data: 
