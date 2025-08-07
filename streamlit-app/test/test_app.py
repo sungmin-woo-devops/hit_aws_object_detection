@@ -2,9 +2,6 @@ import pytest
 import sys
 from pathlib import Path
 import numpy as np
-from PIL import Image
-import tempfile
-import json
 
 # Add the parent directory to the path to import app functions
 sys.path.append(str(Path(__file__).parent.parent))
@@ -13,33 +10,31 @@ from app import (
     preprocess_image,
     postprocess_detections,
     draw_detections,
-    convert_pt_to_onnx_and_metadata,
-    load_model_and_metadata
 )
 
 
 class TestImageProcessing:
     """Test image processing functions"""
-    
+
     def test_preprocess_image_rgb(self):
         """Test preprocessing RGB image"""
         # Create a test RGB image
         test_image = np.random.randint(0, 255, (100, 100, 3), dtype=np.uint8)
         processed = preprocess_image(test_image, 320)
-        
+
         assert processed.shape == (1, 3, 320, 320)
         assert processed.dtype == np.float32
         assert np.all(processed >= 0) and np.all(processed <= 1)
-    
+
     def test_preprocess_image_rgba(self):
         """Test preprocessing RGBA image"""
         # Create a test RGBA image
         test_image = np.random.randint(0, 255, (100, 100, 4), dtype=np.uint8)
         processed = preprocess_image(test_image, 320)
-        
+
         assert processed.shape == (1, 3, 320, 320)
         assert processed.dtype == np.float32
-    
+
     def test_preprocess_image_grayscale(self):
         """Test preprocessing grayscale image"""
         # Create a test grayscale image
@@ -48,7 +43,7 @@ class TestImageProcessing:
         
         assert processed.shape == (1, 3, 320, 320)
         assert processed.dtype == np.float32
-    
+
     def test_postprocess_detections(self):
         """Test postprocessing detections"""
         # Mock YOLO output (batch_size=1, num_detections=2, features=6)
@@ -56,48 +51,47 @@ class TestImageProcessing:
             [100, 100, 50, 50, 0.8, 0],  # x, y, w, h, conf, class_id
             [200, 200, 30, 30, 0.6, 1]   # x, y, w, h, conf, class_id
         ]])
-        
+
         img_shape = (640, 640)
         imgsz = 320
-        
+
         boxes, scores, class_ids = postprocess_detections(
             mock_output, 0.5, 0.45, img_shape, imgsz
         )
-        
+
         assert len(boxes) >= 0  # NMS might remove some boxes
         assert len(scores) >= 0
         assert len(class_ids) >= 0
-    
+
     def test_draw_detections(self):
         """Test drawing detections on image"""
         # Create a test image
         test_image = np.random.randint(0, 255, (100, 100, 3), dtype=np.uint8)
-        
+
         # Mock detections
         boxes = np.array([[10, 10, 50, 50], [20, 20, 60, 60]])
         scores = np.array([0.8, 0.6])
         class_ids = np.array([0, 1])
         class_names = ["service1", "service2"]
-        
+
         result = draw_detections(test_image, boxes, scores, class_ids, class_names)
-        
+
         assert result.shape == test_image.shape
         assert result.dtype == test_image.dtype
 
 
 class TestModelConversion:
     """Test model conversion functions"""
-    
     def test_convert_pt_to_onnx_no_files(self, tmp_path):
         """Test conversion when no PT files exist"""
         # Create a temporary models directory without PT files
         models_dir = tmp_path / "models"
         models_dir.mkdir()
-        
+
         # Mock the Path(__file__).parent to point to our temp directory
         import app
         original_parent = app.Path(__file__).parent
-        
+ 
         try:
             # Temporarily modify the function to use our temp directory
             def mock_convert():
@@ -112,7 +106,7 @@ class TestModelConversion:
             assert metadata is None
         finally:
             pass
-    
+
     def test_metadata_structure(self):
         """Test metadata structure validation"""
         # Create a mock metadata
@@ -125,12 +119,12 @@ class TestModelConversion:
             "num_classes": 1,
             "timestamp": "20250101_000000"
         }
-        
+
         # Check required fields
         required_fields = ["model_path", "classes", "imgsz", "conf_threshold"]
         for field in required_fields:
             assert field in mock_metadata
-        
+
         # Check data types
         assert isinstance(mock_metadata["classes"], list)
         assert isinstance(mock_metadata["imgsz"], int)
@@ -139,7 +133,7 @@ class TestModelConversion:
 
 class TestAppConfiguration:
     """Test app configuration and dependencies"""
-    
+
     def test_required_imports(self):
         """Test that all required modules can be imported"""
         import streamlit as st
@@ -149,10 +143,10 @@ class TestAppConfiguration:
         import torch
         from ultralytics import YOLO
         from PIL import Image
-        
+
         # If we get here, all imports succeeded
         assert True
-    
+
     def test_css_styles(self):
         """Test that CSS styles are properly defined"""
         # This would be tested in a real browser, but we can check the CSS string exists
@@ -172,7 +166,7 @@ class TestAppConfiguration:
             border: 1px solid #333333;
         }
         """
-        
+
         assert "main-header" in css_content
         assert "detection-stats" in css_content
         assert "#1e1e1e" in css_content  # Dark background
@@ -180,42 +174,42 @@ class TestAppConfiguration:
 
 class TestFileOperations:
     """Test file operations and path handling"""
-    
+
     def test_sample_images_discovery(self):
         """Test that sample images can be discovered"""
         current_dir = Path(__file__).parent.parent
         sample_dir = current_dir / "samples"
-        
+
         if sample_dir.exists():
             # Check for common image formats
             image_extensions = ["*.png", "*.jpg", "*.jpeg", "*.bmp", "*.tiff"]
             found_images = []
-            
+
             for ext in image_extensions:
                 found_images.extend(sample_dir.glob(ext))
-            
+
             # We should find at least some images
             assert len(found_images) >= 0  # Allow 0 for CI environments
-    
+
     def test_models_directory_structure(self):
         """Test models directory structure"""
         current_dir = Path(__file__).parent.parent
         models_dir = current_dir / "models"
-        
+
         # Check if models directory exists
         assert models_dir.exists(), "Models directory should exist"
-        
+
         # Check for PT files
         pt_files = list(models_dir.glob("*.pt"))
         assert len(pt_files) >= 0  # Allow 0 for CI environments
-    
+
     def test_requirements_file(self):
         """Test that requirements.txt exists and is valid"""
         current_dir = Path(__file__).parent.parent
         requirements_file = current_dir / "requirements.txt"
-        
+
         assert requirements_file.exists(), "requirements.txt should exist"
-        
+
         # Check that file is not empty
         with open(requirements_file, 'r') as f:
             content = f.read()
@@ -223,4 +217,4 @@ class TestFileOperations:
 
 
 if __name__ == "__main__":
-    pytest.main([__file__, "-v"]) 
+    pytest.main([__file__, "-v"])
