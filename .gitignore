@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Model files
+*.pt
+*.onnx
+*.engine
+*.trt
+*.weights
+
+# Data
+training-pipeline/data/raw/
+training-pipeline/data/processed/
+training-pipeline/outputs/
+*.jpg
+*.jpeg
+*.png
+*.mp4
+*.avi
+
+# Logs
+*.log
+logs/
+wandb/
+tensorboard_logs/
+
+# AWS
+.aws/
+*.pem
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+.dockerignore
+
+# Environment variables
+.env
+.env.local
+.env.production

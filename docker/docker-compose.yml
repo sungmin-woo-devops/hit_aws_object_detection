@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  streamlit-app:
+    build:
+      context: ../streamlit-app
+      dockerfile: ../docker/Dockerfile.streamlit
+    ports:
+      - "8501:8501"
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+    volumes:
+      - ../streamlit-app:/app
+      - model-cache:/app/models
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  training:
+    build:
+      context: ../training-pipeline
+      dockerfile: ../docker/Dockerfile.training
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - CUDA_VISIBLE_DEVICES=0
+    volumes:
+      - ../training-pipeline:/workspace
+      - training-data:/workspace/data
+      - training-outputs:/workspace/outputs
+    networks:
+      - app-network
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - streamlit-app
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  model-cache:
+  training-data:
+  training-outputs:
+
+networks:
+  app-network:
+    driver: bridge

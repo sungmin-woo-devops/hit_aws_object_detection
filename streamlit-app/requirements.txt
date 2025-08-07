@@ -2,7 +2,7 @@ streamlit==1.48.0
 ultralytics==8.3.173
 opencv-python-headless==4.8.1.78
 Pillow==11.3.0
-numpy==2.2.6
+numpy==1.24.3
 torch==2.7.1
 torchvision==0.22.1
 onnxruntime==1.18.0

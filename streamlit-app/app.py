@@ -87,6 +87,12 @@ def load_model_and_metadata(metadata_path: str):
             metadata = json.load(f)
         
         model_path = metadata["model_path"]
+        
+        # Handle relative paths by resolving against the current script directory
+        if not Path(model_path).is_absolute():
+            current_dir = Path(__file__).parent
+            model_path = str(current_dir / model_path)
+        
         if not Path(model_path).exists():
             st.error(f"Model file not found: {model_path}")
             st.stop()
