@@ -40,7 +40,7 @@ class TestImageProcessing:
         # Create a test grayscale image
         test_image = np.random.randint(0, 255, (100, 100), dtype=np.uint8)
         processed = preprocess_image(test_image, 320)
-        
+
         assert processed.shape == (1, 3, 320, 320)
         assert processed.dtype == np.float32
 
@@ -66,7 +66,9 @@ class TestImageProcessing:
     def test_draw_detections(self):
         """Test drawing detections on image"""
         # Create a test image
-        test_image = np.random.randint(0, 255, (100, 100, 3), dtype=np.uint8)
+        test_image = np.random.randint(
+            0, 255, (100, 100, 3), dtype=np.uint8
+        )
 
         # Mock detections
         boxes = np.array([[10, 10, 50, 50], [20, 20, 60, 60]])
@@ -74,7 +76,9 @@ class TestImageProcessing:
         class_ids = np.array([0, 1])
         class_names = ["service1", "service2"]
 
-        result = draw_detections(test_image, boxes, scores, class_ids, class_names)
+        result = draw_detections(
+            test_image, boxes, scores, class_ids, class_names
+        )
 
         assert result.shape == test_image.shape
         assert result.dtype == test_image.dtype
@@ -91,7 +95,7 @@ class TestModelConversion:
         # Mock the Path(__file__).parent to point to our temp directory
         import app
         original_parent = app.Path(__file__).parent
- 
+
         try:
             # Temporarily modify the function to use our temp directory
             def mock_convert():
@@ -99,7 +103,7 @@ class TestModelConversion:
                 if not pt_files:
                     return None, None
                 return "dummy_path", {}
-            
+
             # Test the function
             onnx_path, metadata = mock_convert()
             assert onnx_path is None
@@ -136,13 +140,6 @@ class TestAppConfiguration:
 
     def test_required_imports(self):
         """Test that all required modules can be imported"""
-        import streamlit as st
-        import cv2
-        import numpy as np
-        import onnxruntime as ort
-        import torch
-        from ultralytics import YOLO
-        from PIL import Image
 
         # If we get here, all imports succeeded
         assert True
@@ -213,7 +210,7 @@ class TestFileOperations:
         # Check that file is not empty
         with open(requirements_file, 'r') as f:
             content = f.read()
-            assert len(content.strip()) > 0, "requirements.txt should not be empty"
+            assert len(content.strip()) > 0, "requirements.txt is empty"
 
 
 if __name__ == "__main__":
