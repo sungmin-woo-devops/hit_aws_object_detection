@@ -1,0 +1,52 @@
+### Phase 0. 준비/정의
+    - 아이콘 수집/정규화: AWS 공식 아이콘 PNG/SVG -> 투명 배경 유지, 다중 스케일 샘플 생성
+    - 클래스 설계: class_map.json(id, name, group, icon_version), alias.csv(EKS="Kubernetes Service 등")
+    - 데이터 정리: 라벨 대상 다이어그램 이미지 수집
+    * 게이트(Gate): 상위 서비스 커버리지 ≥80%, 아이콘 버전 메타 확보
+
+### Phase 1. 1차 오토라벨(정밀도↑: 템플릿 매칭)
+    - ORB/SIFT + RANSAC 정합 -> 바운딩박스 자동 생성
+    - 멀티스케일(0.6 ~ 1.6), 회전 허용, NMS IoU=0.5
+    - 출력: pseudo/template.jsonl(xyxy, class, score, source="template")
+    * 게이트: 샘플 100장 기준 precision ≥0.90, miss 케이스 수집
+
+### Phase 2. 2차 오토라벨(리콜↑: 텍스트 조건 탐지)
+    - VLM/텍스트-조건 탐지(예: Grounding-DINO/GLIP/Florence 대체 가능)
+    - prompts.txt의 프롬프트로 후보 박스 생성
+    - 출력: pseudo/vlm.jsonl (score는 별도 스케일)
+    * 게이트: 템플릿 실패 케이스의 recall +20~40%p 보강
+
+### Phase 3. 병합/정제
+    - 규칙 기반 머지: 템플릿 우선(가중치 + 0.15), soft-NMS, 동의어 해소
+    - 유사군 (EC2/EKS/ECS, S3/Glacier/IA) 혼동 시 클래스 제약 규칙 적용
+    - 출력: pseudo/merged.coco.json
+    * 게이트: 소규모 교정 샘플에서 mA50 ≥0.65(의사라벨 기준)
+
+### Phase 4. 최소 휴먼 QA(액티브러닝)
+    - 검수 샘플링 규칙: (a) 낮은 conf, (b) 템플릿·VLM 불일치, (c) 소형/중첩 박스
+    - 200~500장 교정 → goldset/train/val COCO 분할
+    * 게이트: goldset 기준 클래스별 F1 ≥0.80(상위 빈도 클래스)
+
+### Phase 5. 전용 탐지기 학습/평가
+    - 모델: YOLOv8/RT-DETR 중 1개(작은 객체 많으므로 imgsz 960~1280, 약한 Aug, anchor 자동튜닝)
+    - 데이터: goldset + 고신뢰 의사라벨
+    - 출력: models/best.pt|onnx, reports/metrics.json(mAP50, mAP50-95, per-class F1)
+    * 게이트 
+        - (프로덕션 투입): 전체 mAP50 ≥0.80, 혼동쌍(예: EC2/EKS/ECS) F1 ≥0.75
+        - 에러 케이스 유형 감소 추세 확인
+
+### Phase 6. 운영/반복(주 1회)
+    - 새 다이어그램 → 전용 모델로 예측 → 상위 불확실 n%만 검수 → 재학습
+    - 아이콘 버전 변경 모니터링(신규 버전 등장 시 템플릿 세트 갱신)
+    - 리포트 자동 생성(mAP, per-class drift, 실패 예시)
+
+### 풀질/리스크 관리
+    - 버전 드리프트: icon_version 메타 저장, 버전별 템플릿 유지/교차검증
+    - 소형/밀집 객체: 해상도 상향, TTA, NMS 파라미터 튜닝
+    - 유사 아이콘 혼동: 계층 라벨(대분류→세분류), 후처리 규칙, 하드네거티브 마이닝
+    - 데이터 편향: 도형/배경 다양화, 합성 데이터(간단한 PasteAug)로 보정
+
+### KPI/모니터링
+    - 정확도: mAP50/95, per-class Precision/Recall/F1
+    - 라벨링 효율: 이미지당 평균 수동 수정 건수, 시간/이미지
+    - 커버리지: 클래스별 탐지 비율, 신규 아이콘 버전 대응 지연시간

@@ -5,7 +5,7 @@ import os
 
 
 def get_mongo_client(url: Optional[str] = None) -> MongoClient:
-    uri = uri or os.getenv("MONGO_URI", "your-mongodb-atlas-uri")
+    uri = url or os.getenv("MONGO_URI", "mongodb+srv://admin:admin@cluster0.zqz7z.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
     return MongoClient(uri)
 
 

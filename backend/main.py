@@ -1,22 +1,18 @@
-import re
-from fastapi import FastAPI, HTTPException
-from fastapi.security import OAuth2PasswordBearer
-from typing import Annotated, List, Dict, Optional
-from uuid import UUID
-from models import (
-    User, UserCreate, 
-    Dataset, DatasetCreate, 
-    Model, ModelCreate, 
-    Experiment, ExperimentCreate,
-    Artifact
-)
-from database import get_db
-from utils import get_supabase_client, get_mongo_collection
-from routes.artifacts import router as artifacts_router
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from core.config import settings
 from routes.auth import router as auth_router
 from routes.data import router as data_router
 
-app = FastAPI()
+app = FastAPI(title="ArchLens")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(data_router, prefix="/data", tags=["data"])

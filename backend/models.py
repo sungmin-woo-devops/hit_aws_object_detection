@@ -1,7 +1,5 @@
-from fastapi.background import P
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, union
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
-from sqlalchemy.engine import create
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 import uuid
