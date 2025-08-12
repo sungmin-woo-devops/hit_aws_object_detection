@@ -1,0 +1,40 @@
+# GPU 가속을 위한 핵심 의존성
+torch>=2.0.0
+torchvision>=0.15.0
+
+# LangChain 및 임베딩 관련
+langchain>=0.1.0
+langchain-openai>=0.1.0
+langchain-community>=0.1.0
+openai>=1.0.0
+
+# 벡터 스토어
+faiss-cpu>=1.7.4
+# GPU 사용시: faiss-gpu>=1.7.4
+
+# 문서 처리
+pypdf>=3.0.0
+pymupdf>=1.23.0
+python-dotenv>=1.0.0
+
+# Google Drive API
+google-auth>=2.0.0
+google-auth-oauthlib>=1.0.0
+google-auth-httplib2>=0.1.0
+google-api-python-client>=2.0.0
+
+# 유틸리티
+tqdm>=4.65.0
+numpy>=1.24.0
+pandas>=2.0.0
+
+# 이미지 처리 및 OCR
+Pillow>=10.0.0
+pytesseract>=0.3.10
+
+# Gradio UI
+gradio>=4.0.0
+
+# 개발 도구 (선택사항)
+jupyter>=1.0.0
+ipykernel>=6.0.0

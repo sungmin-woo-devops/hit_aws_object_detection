@@ -1,0 +1,4 @@
+openai_model = "gpt-4o-mini"
+chunk_size = 1200
+chunk_overlap = 150
+top_k = 5
