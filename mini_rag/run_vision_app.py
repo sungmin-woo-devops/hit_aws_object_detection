@@ -109,10 +109,10 @@ with gr.Blocks(title="AWS 다이어그램 Vision 분석", theme=gr.themes.Soft()
 
 if __name__ == "__main__":
     print("AWS 다이어그램 Vision 분석 앱을 시작합니다...")
-    print("브라우저에서 http://localhost:7860 으로 접속하세요.")
+    print("브라우저에서 http://localhost:17860 으로 접속하세요.")
     demo.launch(
         server_name="0.0.0.0", 
-        server_port=7860,
-        share=False,
+        server_port=17860,
+        share=True,
         show_error=True
     )

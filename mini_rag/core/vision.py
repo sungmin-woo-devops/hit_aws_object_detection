@@ -11,7 +11,10 @@ def _img_to_b64(pil: Image.Image, max_w=1600, quality=90):
     buf = io.BytesIO(); pil.save(buf, format="JPEG", quality=quality, optimize=True)
     return base64.b64encode(buf.getvalue()).decode("utf-8")
 
-def analyze_image(pil_img, *, extra_context="", icon_json="", json_only=False, model="gpt-4o-mini"):
+def analyze_image(
+    pil_img, *, extra_context="", icon_json="", json_only=False, model="gpt-4o-mini",
+    aws_only=False
+):
     """AWS 다이어그램 이미지 분석"""
     b64 = _img_to_b64(pil_img)
     llm = ChatOpenAI(model=model, temperature=0.1)
@@ -28,7 +31,8 @@ def analyze_image(pil_img, *, extra_context="", icon_json="", json_only=False, m
     human = [
         {"type":"text","text":f"{context_text}\n\n이 AWS 아키텍처 다이어그램을 분석해주세요."},
         {"type":"image_url","image_url":{"url":f"data:image/jpeg;base64,{b64}"}},
-        {"type":"text","text":"다음 순서로 분석해주세요:\n1. 구조화된 JSON 형태로 AWS 서비스와 구성요소 정리\n2. 한국어로 상세한 아키텍처 해설\n\nJSON은 다음과 같은 형식으로 작성하세요:\n{\n  \"services\": [{\"name\": \"서비스명\", \"count\": 개수, \"labels\": [\"라벨1\", \"라벨2\"]}],\n  \"connections\": [{\"from\": \"시작점\", \"to\": \"도착점\", \"protocol\": \"프로토콜\", \"notes\": \"설명\"}],\n  \"networking\": {\"vpcs\": [], \"subnets\": [], \"security_groups\": []},\n  \"data_stores\": [{\"name\": \"저장소명\", \"notes\": \"설명\"}]\n}"}
+        {"type":"text",
+         "text":"다음 순서로 분석해주세요:\n1. 구조화된 JSON 형태로 AWS 서비스와 구성요소 정리\n2. 한국어로 상세한 아키텍처 해설\n\nJSON은 다음과 같은 형식으로 작성하세요:\n{\n  \"services\": [{\"name\": \"서비스명\", \"count\": 개수, \"labels\": [\"라벨1\", \"라벨2\"]}],\n  \"connections\": [{\"from\": \"시작점\", \"to\": \"도착점\", \"protocol\": \"프로토콜\", \"notes\": \"설명\"}],\n  \"networking\": {\"vpcs\": [], \"subnets\": [], \"security_groups\": []},\n  \"data_stores\": [{\"name\": \"저장소명\", \"notes\": \"설명\"}]\n}"}
     ]
     
     res = llm.invoke([SystemMessage(content=VISION_SYS), HumanMessage(content=human)])

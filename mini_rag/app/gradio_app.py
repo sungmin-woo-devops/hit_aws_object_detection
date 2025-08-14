@@ -27,9 +27,11 @@ class RagApp:
 
     def ensure(self, drive_folder: str = "", shared_folder: str = "", force: bool = False):
         t0 = time.time()
-        self.vs = rebuild_vectorstore(drive_folder, shared_folder) if force else build_or_load_vectorstore(drive_folder, shared_folder)
+        self.vs = rebuild_vectorstore(drive_folder, shared_folder) \
+            if force else build_or_load_vectorstore(drive_folder, shared_folder)
         self.qa = make_qa(self.vs, k=self.k, prompt=RAG_PROMPT, model=OPENAI_MODEL)
-        folder_info = f"drive={drive_folder}, shared={shared_folder}" if drive_folder and shared_folder else (drive_folder or shared_folder)
+        folder_info = f"drive={drive_folder}, shared={shared_folder}" \
+            if drive_folder and shared_folder else (drive_folder or shared_folder)
         self.last_info = f"index ready k={self.k} folders={folder_info} ({time.time()-t0:.1f}s)"
         return self.last_info
 

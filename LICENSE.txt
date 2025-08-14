@@ -1,0 +1,9 @@
+This product includes software developed by:
+- Tiptap (MIT) – https://github.com/ueberdosis/tiptap
+- ProseMirror (MIT) – prosemirror.net
+- Yjs / y-websocket / y-prosemirror (MIT) – github.com/yjs
+- PDF.js (Apache-2.0) – mozilla.github.io/pdf.js
+- pdf-lib (MIT) – github.com/Hopding/pdf-lib
+- Hypothesis client (BSD-2-Clause) – github.com/hypothesis/client
+- KaTeX (MIT) – github.com/KaTeX/KaTeX
+- Lucide Icons (see LICENSE) – github.com/lucide-icons/lucide
